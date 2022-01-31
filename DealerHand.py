@@ -24,7 +24,10 @@ class DealerHand:
         return self.cards
 
     def sortCards(self):
-        for i in range(0,self.cards.size-1):
-            if self.cards[i].nr > self.cards[i+1].nr:
-                self.cards[[0,i]] = self.cards[[i,0]] # swap columns
+        for j in range (0, self.cards.size - 1):
+            for i in range(0, self.cards.size - j - 1):
+                if self.cards[i].nr > self.cards[i + 1].nr:
+                    _t = self.cards[i]
+                    self.cards[i] = self.cards[i+1]
+                    self.cards[i+1] = _t
     
