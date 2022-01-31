@@ -3,7 +3,7 @@ class Card:
     name = ""
     type = ""
     played = False
-    def __init__(self, nr, name, type):
+    def __init__(self, name, nr, type):
         self.nr = nr
         self.name = name
         self.type = type
