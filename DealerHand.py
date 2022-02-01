@@ -50,7 +50,7 @@ class DealerHand:
         """
         for j in range (0, self.cards.size - 1):
             for i in range(0, self.cards.size - j - 1):
-                if self.cards[i].nr > self.cards[i + 1].nr:
+                if self.cards[i].number > self.cards[i + 1].number:
                     _t = self.cards[i]
                     self.cards[i] = self.cards[i+1]
                     self.cards[i+1] = _t

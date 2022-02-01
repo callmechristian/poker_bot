@@ -29,10 +29,10 @@ class StackChecker:
             bool: true if royal flush present, false otherwise
         """
         self.checked_royal_flush += 1
-        if cards[0].nr%14 == 0:
+        if cards[0].number%14 == 0:
             i = 9
             for card in cards:
-                if card.nr == i:
+                if card.number == i:
                     i = i + 1
             if i == 14:
                 return True
@@ -55,15 +55,15 @@ class StackChecker:
 
         for key, value in types.items():
             if value >= 5:
-                prevnr = cards[0].nr
+                prevnr = cards[0].number
                 _ret = True
                 # currently iterates through first card but doesn't need to.. fix?
                 for card in cards:
                     if card.type == key:
-                        if prevnr + 1 != card.nr:
+                        if prevnr + 1 != card.number:
                             _ret = False
                         else:
-                            prevnr = card.nr
+                            prevnr = card.number
                 return _ret
         return False
     def checkForFourOfAKind(self, cards):
@@ -144,13 +144,13 @@ class StackChecker:
             bool: true if straight present, false otherwise
         """
         self.checked_straight += 1
-        prevnr = cards[0].nr
+        prevnr = cards[0].number
         straightnrs = 0
         # currently iterates through first card but doesn't need to.. fix?
         for card in cards:
-            if prevnr + 1 == card.nr:
+            if prevnr + 1 == card.number:
                 straightnrs = straightnrs + 1
-                prevnr = card.nr
+                prevnr = card.number
             if straightnrs >= 5:
                 return True
         return False
@@ -236,4 +236,4 @@ class StackChecker:
                 stack.best_player_hand = "One Pair"
             else:
                 stack.best_player_hand = "High Card"
-                print("Best available hand: " + stack.best_player_hand)
+            print("Best available hand: " + stack.best_player_hand)
