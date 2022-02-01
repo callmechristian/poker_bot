@@ -3,6 +3,7 @@ from Deck import Deck
 from Hand import Hand
 from DealerHand import DealerHand
 from CardStack import CardStack
+from StackChecker import StackChecker
 
 d = Deck()
 
@@ -11,8 +12,10 @@ dealer = DealerHand(np.array([d.cards[11],d.cards[10],d.cards[9],d.cards[3],d.ca
 
 stack = CardStack(hand.cards, dealer.cards)
 # stack.print()
+checker = StackChecker()
 
-stack.checkHand()
+# checker.checkHand(stack)
+
 
 # print(d.cards[13].name)
 

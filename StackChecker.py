@@ -9,6 +9,7 @@ class StackChecker:
     """class for the checking functions
     """
     checked_hands = 0
+    #TODO: use dict
     checked_royal_flush = 0
     checked_straight_flush = 0
     checked_four_of_a_kind = 0
@@ -146,7 +147,7 @@ class StackChecker:
         self.checked_straight += 1
         prevnr = cards[0].number
         straightnrs = 0
-        # currently iterates through first card but doesn't need to.. fix?
+        #TODO: currently iterates through first card but doesn't need to.. fix?
         for card in cards:
             if prevnr + 1 == card.number:
                 straightnrs = straightnrs + 1
@@ -221,19 +222,26 @@ class StackChecker:
             elif self.checkForStraightFlush(stack.cards):
                 stack.best_player_hand = "Straight Flush"
             elif self.checkForFourOfAKind(stack.cards):
+                #TODO: return card number
                 stack.best_player_hand = "Four of a Kind"
             elif self.checkForFullHouse(stack.cards):
+                #TODO: return card numbers
                 stack.best_player_hand = "Full House"
             elif self.checkForFlush(stack.cards):
+                #TODO: return card type
                 stack.best_player_hand = "Flush"
             elif self.checkForStraight(stack.cards):
                 stack.best_player_hand = "Straight"
             elif self.checkForThreeOfAKind(stack.cards):
+                #TODO: return card number
                 stack.best_player_hand = "Three of a Kind"
             elif self.checkForTwoPair(stack.cards):
+                #TODO: return card numbers
                 stack.best_player_hand = "Two Pair"
             elif self.checkForOnePair(stack.cards):
+                #TODO: return card number
                 stack.best_player_hand = "One Pair"
             else:
+                #TODO: return card number
                 stack.best_player_hand = "High Card"
             print("Best available hand: " + stack.best_player_hand)
