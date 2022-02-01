@@ -1,9 +1,13 @@
+"""Module for the card object class
+"""
 class Card:
-    nr = 0
+    """Class for the each Card object e.g. Ace of Hearts, King of Spades
+    """
+    number = 0
     name = ""
     type = ""
     played = False
-    def __init__(self, name, nr, type):
-        self.nr = nr
+    def __init__(self, name, number, ctype):
+        self.number = number
         self.name = name
-        self.type = type
+        self.type = ctype
