@@ -8,17 +8,16 @@ import numpy as np
 class StackChecker:
     """class for the checking functions
     """
-    checked_hands = 0
-    #TODO: use dict
-    checked_royal_flush = 0
-    checked_straight_flush = 0
-    checked_four_of_a_kind = 0
-    checked_full_house = 0
-    checked_flush = 0
-    checked_straight = 0
-    checked_three_of_a_kind = 0
-    checked_two_pair = 0
-    checked_one_pair = 0
+    # stats for this checker
+    checked = {"hands": 0,
+            "royals_flush": 0,
+            "straight_flush":0,
+            "four_of_a_kind":0,
+            "full_house":0,
+            "straight":0,
+            "three_of_a_kind":0,
+            "two_pair":0,
+            "one_pair":0}
 
     def checkForRoyalFlush(self, cards):
         """checks for royal flush
@@ -29,7 +28,7 @@ class StackChecker:
         Returns:
             bool: true if royal flush present, false otherwise
         """
-        self.checked_royal_flush += 1
+        self.checked["royal_flush"] += 1
         if cards[0].number%14 == 0:
             i = 9
             for card in cards:
@@ -47,7 +46,7 @@ class StackChecker:
         Returns:
             bool: true if straight flush present, false otherwise
         """
-        self.checked_straight_flush += 1
+        self.checked["straight_flush"] += 1
         types = {"Hearts":0,"Spades":0,"Diamonds":0,"Clubs":0}
         for card in cards:
             for i in range(4):
@@ -76,7 +75,7 @@ class StackChecker:
         Returns:
             bool: true if four of a kind present, false otherwise
         """
-        self.checked_four_of_a_kind += 1
+        self.checked["four_of_a_kind"] += 1
         for i in range(cards.size):
             for j in range(i+1,cards.size):
                 for k in range(j+1,cards.size):
@@ -98,7 +97,7 @@ class StackChecker:
         Returns:
             bool: true if full house present, false otherwise
         """
-        self.checked_full_house += 1
+        self.checked["full_house"] += 1
         three_of_a_kind_found = False
         for i in range(cards.size):
             for j in range(i+1,cards.size):
@@ -121,7 +120,7 @@ class StackChecker:
         Returns:
             bool: true if flush present, false otherwise
         """
-        self.checked_flush += 1
+        self.checked["flush"] += 1
         types = {"Hearts":0,"Spades":0,"Diamonds":0,"Clubs":0}
         for card in cards:
             for i in range(4):
@@ -144,7 +143,7 @@ class StackChecker:
         Returns:
             bool: true if straight present, false otherwise
         """
-        self.checked_straight += 1
+        self.checked["straight"] += 1
         prevnr = cards[0].number
         straightnrs = 0
         #TODO: currently iterates through first card but doesn't need to.. fix?
@@ -164,7 +163,7 @@ class StackChecker:
         Returns:
             bool: true if three of a kind present, false otherwise
         """
-        self.checked_three_of_a_kind += 1
+        self.checked["three_of_a_kind"] += 1
         for i in range(cards.size):
             for j in range(i+1,cards.size):
                 for k in range(j+1,cards.size):
@@ -182,7 +181,7 @@ class StackChecker:
         Returns:
             bool: true if two pair present, false otherwise
         """
-        self.checked_two_pair += 1
+        self.checked["two_pair"] += 1
         pairs = 0
         for i in range(cards.size):
             for j in range(i+1,cards.size):
@@ -203,7 +202,7 @@ class StackChecker:
         Returns:
             bool: true if one pair present, false otherwise
         """
-        self.checked_one_pair += 1
+        self.checked["one_pair"] += 1
         for i in range(cards.size):
             for j in range(i+1,cards.size):
                 if j > cards.size:
@@ -215,7 +214,7 @@ class StackChecker:
     def checkHand(self, stack):
         """check for hand values and card combinations in given stack
         """
-        self.checked_hands += 1
+        self.checked["hands"] += 1
         if stack.cards.size > 0:
             if self.checkForRoyalFlush(stack.cards):
                 stack.best_player_hand = "Royal Flush"
