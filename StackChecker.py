@@ -73,7 +73,7 @@ class StackChecker:
             cards (numpy array): numpy array of cards
 
         Returns:
-            bool: true if four of a kind present, false otherwise
+            dict: true if four of a kind present, false otherwise and the card number
         """
         self.checked["four_of_a_kind"] += 1
         for i in range(cards.size):
@@ -86,8 +86,8 @@ class StackChecker:
                                 == cards[j].number%13
                                 == cards[k].number%13
                                 == cards[l].number%13):
-                            return True
-        return False
+                            return {"four_of_a_kind": True, "card_number": cards[i].number%13}
+        return {"four_of_a_kind": False}
     def checkForFullHouse(self, cards):
         """checks for full house
 
@@ -99,18 +99,21 @@ class StackChecker:
         """
         self.checked["full_house"] += 1
         three_of_a_kind_found = False
+        three_pair = 0
         for i in range(cards.size):
             for j in range(i+1,cards.size):
                 for k in range(j+1,cards.size):
                     if k > cards.size:
                         continue
                     if cards[i].number%13 == cards[j].number%13 == cards[k].number%13:
+                        three_pair = cards[i].number%13
                         three_of_a_kind_found = True
                         cards = np.delete(cards, [i,j,k], None)
         if three_of_a_kind_found:
-            if self.checkForOnePair(cards):
-                return True
-        return False
+            one_pair, one_pair_card = self.checkForOnePair(cards)
+            if one_pair:
+                return {"full_house": True, "three_pair": three_pair, "two_pair": one_pair_card}
+        return {"full_house": False}
     def checkForFlush(self, cards):
         """checks for flush
 
@@ -125,15 +128,14 @@ class StackChecker:
         for card in cards:
             for i in range(4):
                 if card.type == list(types.keys())[i]:
-                    # check if at least 5 cards of this type have been found and exit if true
-                    if list(types.values())[i]+1 >= 5:
-                        return True
                     types.update({card.type:(list(types.values())[i]+1)})
 
+        i = 0
         for value in list(types.values()):
             if value >= 5:
-                return True
-        return False
+                return {"flush": True, "flush_type": list(types.keys())[i]}
+            i += 1
+        return {"flush": False}
     def checkForStraight(self, cards):
         """checks for straight
 
@@ -152,8 +154,8 @@ class StackChecker:
                 straightnrs = straightnrs + 1
                 prevnr = card.number
             if straightnrs >= 5:
-                return True
-        return False
+                return {"straight": False, "highest_card": prevnr}
+        return {"straight": False}
     def checkForThreeOfAKind(self, cards):
         """checks for three of a kind
 
@@ -170,8 +172,8 @@ class StackChecker:
                     if k > cards.size:
                         continue
                     if cards[i].number%13 == cards[j].number%13 == cards[k].number%13:
-                        return True
-        return False
+                        return {"three_of_a_kind": True, "card": cards[i].number%13}
+        return {"three_of_a_kind": False}
     def checkForTwoPair(self, cards):
         """checks for two pair
 
@@ -183,16 +185,31 @@ class StackChecker:
         """
         self.checked["two_pair"] += 1
         pairs = 0
+        pairs_number = []
         for i in range(cards.size):
             for j in range(i+1,cards.size):
                 if j > cards.size:
                     continue
                 if cards[i].number%13 == cards[j].number%13:
+                    pairs_number.append(cards[i].number%13)
                     pairs += 1
         if pairs >= 2:
-            return True
+            # sort pairs by number
+            highest_card = 0
+            second_highest_card = 0
+            if 0 in pairs_number:
+                highest_card = 0
+                for number in pairs_number:
+                    if number > highest_card:
+                        second_highest_card = number
+            else:
+                for number in pairs_number:
+                    if number > highest_card:
+                        second_highest_card = highest_card
+                        highest_card = number
+            return {"two_pair": True, "card1": highest_card,"card2": second_highest_card}
         else:
-            return False
+            return {"two_pair": False}
     def checkForOnePair(self, cards):
         """checks for one pair
 
@@ -208,8 +225,8 @@ class StackChecker:
                 if j > cards.size:
                     continue
                 if cards[i].number%13 == cards[j].number%13:
-                    return True
-        return False
+                    return {"one_pair": True, "card": cards[i].number%13}
+        return {"one_pair": False}
 
     def checkHand(self, stack):
         """check for hand values and card combinations in given stack
@@ -218,29 +235,38 @@ class StackChecker:
         if stack.cards.size > 0:
             if self.checkForRoyalFlush(stack.cards):
                 stack.best_player_hand = "Royal Flush"
-            elif self.checkForStraightFlush(stack.cards):
+                return {"hand": "Royal Flush"}
+            if self.checkForStraightFlush(stack.cards):
                 stack.best_player_hand = "Straight Flush"
-            elif self.checkForFourOfAKind(stack.cards):
-                #TODO: return card number
+            four_of_a_kind, four_of_a_kind_card = self.checkForFourOfAKind(stack.cards)
+            if four_of_a_kind:
                 stack.best_player_hand = "Four of a Kind"
-            elif self.checkForFullHouse(stack.cards):
-                #TODO: return card numbers
+                return {"hand": "Royal Flush","card": four_of_a_kind_card}
+            full_house, full_house_three_pair, full_house_two_pair = self.checkForFullHouse(stack.cards)
+            if full_house:
                 stack.best_player_hand = "Full House"
-            elif self.checkForFlush(stack.cards):
-                #TODO: return card type
+                return {"hand": "Full House", "three_pair": full_house_three_pair, "two_pair": full_house_two_pair}
+            flush, flush_type, flush_highest = self.checkForFlush(stack.cards)
+            if flush:
                 stack.best_player_hand = "Flush"
-            elif self.checkForStraight(stack.cards):
+                return {"hand": "Flush", "flush_type": flush_type, "highest_card": flush_highest}
+            straight, straight_highest = self.checkForStraight(stack.cards)
+            if straight:
                 stack.best_player_hand = "Straight"
-            elif self.checkForThreeOfAKind(stack.cards):
-                #TODO: return card number
+                return {"hand": "Straight", "highest_card": straight_highest}
+            three_of_a_kind, three_of_a_kind_card = self.checkForThreeOfAKind(stack.cards)
+            if three_of_a_kind:
                 stack.best_player_hand = "Three of a Kind"
-            elif self.checkForTwoPair(stack.cards):
-                #TODO: return card numbers
+                return {"hand":"Three of a Kind", "card": three_of_a_kind_card}
+            two_pair, two_pair_card1, two_pair_card2 = self.checkForTwoPair(stack.cards)
+            if two_pair:
                 stack.best_player_hand = "Two Pair"
-            elif self.checkForOnePair(stack.cards):
-                #TODO: return card number
+                return {"hand":"Two Pair", "card1": two_pair_card1, "card2": two_pair_card2}
+            one_pair, one_pair_card = self.checkForOnePair(stack.cards)
+            if one_pair:
                 stack.best_player_hand = "One Pair"
-            else:
-                #TODO: return card number
-                stack.best_player_hand = "High Card"
-            print("Best available hand: " + stack.best_player_hand)
+                return {"hand":"One Pair", "card": one_pair_card}
+            stack.best_player_hand = "High Card"
+            return {"hand":"High Card"}
+        else:
+            return {"hand": "No cards"}
